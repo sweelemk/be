@@ -22,6 +22,18 @@ module.exports = (sequelize, DataTypes) => {
         },
         role: {
             type: DataTypes.STRING
+        },
+        languages: {
+            type : DataTypes.ARRAY(DataTypes.JSON),
+            defaultValue: [],
+            get() {
+                const data = this.getDataValue('languages');
+                const toSend = [];
+                data.forEach(val => {
+                    toSend.push(typeof val === 'string' ? JSON.parse(val) : val);
+                });
+                return toSend;
+            }
         }
     }, {
         underscored: true
@@ -34,7 +46,6 @@ module.exports = (sequelize, DataTypes) => {
     };
 
     Users.prototype.isValidPassword = function(password) {
-        console.log(password, this.passwordHash);
         return bcrypt.compareSync(password, this.passwordHash);
     };
 
